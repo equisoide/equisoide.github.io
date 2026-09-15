@@ -1,0 +1,9 @@
+[
+  {
+    "slug": "running-pending-done",
+    "title": "El problema más caro de trabajar con varios agentes no es que se equivoquen. Es que pierdan el hilo entre ellos.",
+    "date": "2026-09-15",
+    "tag": "Ingeniería",
+    "lede": "Tres carpetas y dos reglas para que el contexto no se caiga entre una sesión de un agente y la siguiente."
+  }
+]

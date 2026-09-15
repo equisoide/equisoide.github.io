@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Running, Pending, Done · Juan Cuartas</title>
+<meta name="description" content="Tres carpetas y dos reglas para que el contexto no se caiga entre una sesión de un agente y la siguiente.">
+<meta property="og:title" content="El problema más caro de trabajar con varios agentes no es que se equivoquen. Es que pierdan el hilo entre ellos.">
+<meta property="og:description" content="Tres carpetas y dos reglas para que el contexto no se caiga entre una sesión de un agente y la siguiente.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<div class="sheet">
+  <nav class="site-nav"><a class="brand" href="../../">Juan Cuartas</a><a href="../../">Todos los posts</a></nav>
+  <article class="card">
+    <div class="byline"><div class="avatar">JC</div><div><div class="byline-name">Juan Cuartas</div><div class="byline-role">15 de septiembre de 2026 · Ingeniería</div></div></div>
+
+    <h1>El problema más caro de trabajar con varios agentes no es que se equivoquen. Es que pierdan el hilo entre ellos.</h1>
+
+    <p class="lede">Llevo meses corriendo agentes de IA en paralelo sobre el mismo proyecto: una sesión abre trabajo, otra lo retoma horas o días después. El costo real nunca fue un mal razonamiento. Fue el contexto que se cae entre una sesión y la siguiente.</p>
+
+    <p>La solución terminó siendo aburrida a propósito: tres carpetas.</p>
+
+    <div class="folders">
+      <div class="folder-row"><span class="folder-name">Running/</span><span class="folder-desc">la sesión de hoy, en curso.</span></div>
+      <div class="folder-row"><span class="folder-name">Pending/</span><span class="folder-desc">terminó dejando trabajo a medias: alguien más la retoma.</span></div>
+      <div class="folder-row"><span class="folder-name">Done/</span><span class="folder-desc">terminó sin nada pendiente.</span></div>
+    </div>
+
+    <p>Dos reglas hacen que esto funcione de verdad:</p>
+
+    <ol class="rules">
+      <li><span>Al cerrar, el propio agente decide la carpeta, no espera que se lo pidan. Si algo queda a medias, va a <em>Pending/</em> con lo que falta escrito arriba, en primera posición.</span></li>
+      <li><span>Adentro no se resume: se escribe todo. Lo medido, lo descartado y por qué, lo que salió mal. La sesión no la abre quien la vivió.</span></li>
+    </ol>
+
+    <p>El efecto que no esperaba: esto volvió trivial el <em>transfer</em> entre agentes. Pasar el trabajo de uno a otro dejó de ser copiar contexto a mano o re-explicar desde cero. Ahora es apuntar al archivo de <em>Pending/</em> y seguir exactamente donde se quedó.</p>
+
+    <p>¿Es una idea nueva? Honestamente, no del todo: memory banks, checkpointing, notas de handoff, el concepto ya circula. Lo que sí creo que vale compartir es la ejecución: forzar la decisión de cierre en vez de dejarla flotando, y forzar que se escriba todo en vez de resumir bonito. Ahí es justo donde la mayoría de los patrones de handoff se quedan cortos: el resumen elegante es lo primero que pierde el detalle que el siguiente agente necesita.</p>
+
+    <p>Y no compite con <em>spec-driven development</em>: se complementan. La spec dice qué hay que construir; la bitácora dice dónde se quedó el que lo estaba construyendo, qué midió y qué descartó. Una evita el drift; la otra evita empezar de cero.</p>
+
+    <hr class="divider">
+
+    <p class="signoff">Si están construyendo con varios agentes y sienten que el contexto se les escapa entre sesiones, prueben esto antes de algo más sofisticado.</p>
+
+    <div class="howto">
+      <div class="howto-label">¿Quieren probarlo en su propio workspace? Péguenle esto a su agente:</div>
+      <div class="prompt-block">
+        <div class="prompt-block-head"><span class="prompt-tag">Prompt para tu agente</span></div>
+        <pre>Crea una carpeta Sessions/ con tres subcarpetas: Running/, Pending/ y Done/.
+
+Running/ guarda la sesión de hoy, en curso.
+Pending/ guarda sesiones que terminaron con trabajo a medias, para que otra sesión las retome.
+Done/ guarda sesiones que terminaron sin nada pendiente.
+
+Reglas que quiero que sigas:
+
+1. Al empezar cualquier sesión, crea un archivo nuevo en Running/ con el nombre AAAA-MM-DD-tema-en-kebab.md.
+
+2. Escribe todo en ese archivo mientras trabajas: detalle, notas, números medidos, lo que descartaste y por qué, lo que salió mal. No resumas: quien lo abra después no vivió la sesión.
+
+3. Al cerrar, decide tú mismo la carpeta destino, no esperes a que te lo pida. Si queda algo a medias, mueve el archivo a Pending/ con lo que falta escrito arriba, en primera posición. Si no queda nada pendiente, muévelo a Done/. Avísame en una línea a qué carpeta quedó y por qué.
+
+4. Al abrir una sesión nueva, revisa si hay un archivo en Running/ con fecha distinta a la de hoy. Si lo hay, es una sesión que terminó sin cerrarse: pregúntame si se mueve a Pending/ o a Done/ antes de empezar la tuya.</pre>
+      </div>
+    </div>
+
+    <div class="tags"><a class="tag" href="../../">← Todos los posts</a></div>
+    <div class="meta"><span class="meta-text">Juan Cuartas</span><span class="meta-text">Septiembre 2026</span></div>
+  </article>
+</div>
+<script>
+document.getElementById('copy').addEventListener('click', async e => {
+  await navigator.clipboard.writeText(document.querySelector('.prompt-block pre').innerText);
+  e.target.textContent = 'Copiado'; setTimeout(() => e.target.textContent = 'Copiar', 1500);
+});
+</script>
+</body>
+</html>

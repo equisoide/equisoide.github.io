@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Juan Cuartas</title>
+<meta name="description" content="Ingeniería, música y otras cosas que me pasan por la cabeza.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<div class="sheet">
+  <div class="hero">
+    <h1>Juan Cuartas</h1>
+    <p>Ingeniería, música y otras cosas que me pasan por la cabeza.</p>
+  </div>
+  <div class="filters" id="filters"></div>
+  <ul class="post-list" id="posts"></ul>
+</div>
+<script>
+(async () => {
+  const posts = await (await fetch('posts.json')).json();
+  posts.sort((a, b) => b.date.localeCompare(a.date));
+  const tags = ['Todo', ...new Set(posts.map(p => p.tag))];
+  const filters = document.getElementById('filters');
+  const list = document.getElementById('posts');
+  let active = 'Todo';
+  const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('es', { day: 'numeric', month: 'long', year: 'numeric' });
+  const render = () => {
+    filters.innerHTML = tags.map(t => `<button class="tag${t === active ? ' active' : ''}" data-t="${t}">${t}</button>`).join('');
+    const shown = posts.filter(p => active === 'Todo' || p.tag === active);
+    list.innerHTML = shown.length ? shown.map(p => `
+      <li class="post-item">
+        <a href="posts/${p.slug}/">${p.title}</a>
+        <div class="sub"><span>${fmt(p.date)}</span><span>·</span><span>${p.tag}</span></div>
+        ${p.lede ? `<p class="lede">${p.lede}</p>` : ''}
+      </li>`).join('') : '<li class="empty">Nada por aquí todavía.</li>';
+  };
+  filters.addEventListener('click', e => { if (e.target.dataset.t) { active = e.target.dataset.t; render(); } });
+  render();
+})();
+</script>
+</body>
+</html>
