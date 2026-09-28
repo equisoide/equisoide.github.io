@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The 40-hour bet · Juan Cuartas</title>
+<meta name="description" content="How I took a complex client requirement end to end, from the first meeting to the release, and am executing it with agents inside guardrails written before starting.">
+<meta property="og:title" content="The team estimated 160 hours. I bet 40. This is how I am executing that bet, one task at a time.">
+<meta property="og:description" content="How I took a complex client requirement end to end, from the first meeting to the release, and am executing it with agents inside guardrails written before starting.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<div class="sheet">
+  <nav class="site-nav"><a class="brand" href="../../">Juan Cuartas</a><a href="../../">All posts</a></nav>
+  <article class="card">
+    <div class="byline"><div class="avatar">JC</div><div><div class="byline-name">Juan Cuartas</div><div class="byline-role">September 28, 2026 · Engineering</div></div><a class="lang-switch" href="../la-apuesta-de-las-40-horas/">Versión en español</a></div>
+
+    <h1>The team estimated 160 hours. I bet 40. This is how I am executing that bet, one task at a time.</h1>
+
+    <p class="lede">A complex client requirement, the kind that at another time would have been a team project spanning several sprints. Instead of delegating it, I took it myself, as a director, from the first meeting to the release, with AI agents doing the work inside rules I wrote before starting. This post is the method, step by step, with the numbers as of today.</p>
+
+    <h2><span class="n">01</span>The requirement is built in the meeting minutes</h2>
+    <p>Every meeting with the client has a transcript. An agent reads it, writes the minutes and files them in the project's knowledge base: what was decided, what is still open and who said it. The client's emails go into the same base, and every confirmation is linked to the point it confirms. When we closed the definition it was 17 agreed points, each one with the meeting or the email it came from. The requirement was not written in one sitting. It accumulated, meeting by meeting, and arrived with traceability.</p>
+
+    <h2><span class="n">02</span>A prototype before a single line of code</h2>
+    <p>The new screen was shown to the client as a prototype, in a deck of seven screenshots, before estimating. What they approved went into the knowledge base; what they did not was marked as discarded, with the date. Estimating something the client has already seen is a different thing from estimating a text.</p>
+
+    <h2><span class="n">03</span>Two estimates, and both are written down</h2>
+    <p>The official estimate came from the team's historical median for work of that kind: 160 hours. My bet was 40, because the work was going to be executed by agents with guardrails and not by one person alone. Both numbers are on the ticket, side by side. If I am wrong, it will be on record by how much.</p>
+
+    <h2><span class="n">04</span>36 tasks, in order, each one closable in a single session</h2>
+    <p>The breakdown is 36 ordered tasks, 166 planned hours. Each task states which tasks it depends on and which requirements it builds. A coverage matrix crosses every requirement from the client and from the design with the tasks that build it: when the last one closes, everything has to be built and tested, or the matrix gives it away. The order goes in the task title, so an agent can pick up "the next one" without asking.</p>
+    <p>An agent created all 36 in Azure DevOps, with their description, hours, dependencies and tags, validating each one against the board's conventions. Loading that breakdown by hand would have been an afternoon of copy and paste, and the first place where the plan drifts from what was written.</p>
+
+    <h2><span class="n">05</span>One skill for a single story</h2>
+    <p>I wrote a skill (the instructions an agent loads when invoked) exclusively for this requirement. It forces three things an agent only does when it remembers to: read the whole before touching code (the full story, the design, the log of what has already been built and the scope of the next three tasks), test backwards when finished, and leave in writing what it did and what remained unresolved. One task per invocation. Chaining them is exactly how the thread gets lost.</p>
+
+    <h2><span class="n">06</span>Model and effort decided beforehand, verified on every task</h2>
+    <p>Not every task calls for the same model. The ones that define a pattern, or carry state semantics that break silently, go to the most capable model; the rest go to a faster one, with the effort level set by size. That table was built once, over the 36 descriptions. The skill checks it before starting, states which model it is running on and stops if they do not match: I make the switch, with a warning first, not the agent.</p>
+
+    <h2><span class="n">07</span>Autonomy through permissions, not trust</h2>
+    <p>The agents run in automatic mode, with a permission list scoped to this requirement: the test database, the new objects, the integration branch. Anything outside the list asks for authorization. When the requirement closes, the permission is revoked. Autonomy is a configuration file with an expiry date.</p>
+
+    <h2><span class="n">08</span>Tests close the gaps in the acceptance criteria</h2>
+    <p>This is where the safety is. The test suite lives in the database itself, in T-SQL, and every task leaves it fully green before opening its PR, not just the part it touched. Before testing, the agent restores the database from a starting backup and deploys the branch on top, so every run starts from the same known state. It also runs the regression of the current functionality, the one the client uses every day, and checks that every new SQL object made it into the database project, because that is the error that gives no warning. And when the task touches the screen, the agent brings the application up in Chrome and tests it itself, with screenshots as evidence.</p>
+    <p>Every requirement in the matrix has a test that some task declares. Acceptance criteria stop being a text someone reviews at the end and become something that runs on every task.</p>
+
+    <h2><span class="n">09</span>The log is part of the code</h2>
+    <p>Every task leaves an entry in a log inside the repository: what it built, the contracts it left behind, what it decided outside the design and the gaps it leaves for the next ones. An open gap pointing at your task is part of your scope even if the description does not name it. And the agents' sessions follow the <a href="../running-pending-done/">Running, Pending, Done</a> scheme from the previous post.</p>
+
+    <h2><span class="n">10</span>The numbers so far</h2>
+    <div class="nums">
+      <div class="num-row"><span class="num-label">Team estimate (median)</span><span class="num-value">160 h</span></div>
+      <div class="num-row"><span class="num-label">My bet</span><span class="num-value">40 h</span></div>
+      <div class="num-row"><span class="num-label">Tasks in the plan</span><span class="num-value">36 · 166 h</span></div>
+      <div class="num-row"><span class="num-label">Tasks closed as of September 28</span><span class="num-value">4 of 36</span></div>
+      <div class="num-row"><span class="num-label">Hours planned for those four</span><span class="num-value">14 h</span></div>
+      <div class="num-row hi"><span class="num-label">Actual hours reported</span><span class="num-value">1.6 h</span></div>
+    </div>
+    <p>It is a small sample, and the first tasks are the foundation ones. I will update this post as tasks close. The last task in the plan builds the final comparison: estimated against actual, task by task, with a one-line verdict, whether it proves me right or wrong.</p>
+
+    <hr class="divider">
+
+    <p>Is it new? Every piece exists on its own: spec-driven development, agents with skills, permissions by mode, automated tests. What I do not see as often is the combination: the director takes the whole requirement, from the minutes to the release, and the agents execute inside guardrails he wrote himself. The method is not the tool. It is the guardrails, and having someone with context on the whole project write them before letting the work go.</p>
+
+    <p class="signoff">If you lead a team and still delegate the complex requirements because there is no time to do them, try taking one whole with this scheme. It is more time than you have, and less than you think.</p>
+
+    <div class="tags"><a class="tag" href="../../">← All posts</a></div>
+    <div class="meta"><span class="meta-text">Juan Cuartas</span><span class="meta-text">September 2026</span></div>
+  </article>
+</div>
+</body>
+</html>
