@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>La apuesta de las 40 horas · Juan Cuartas</title>
+<meta name="description" content="Cómo tomé un requerimiento complejo del cliente completo, de la primera reunión al release, y lo estoy ejecutando con agentes dentro de guardrails escritos antes de empezar.">
+<meta property="og:title" content="El equipo estimó 160 horas. Yo aposté 40. Así estoy ejecutando esa apuesta, tarea por tarea.">
+<meta property="og:description" content="Cómo tomé un requerimiento complejo del cliente completo, de la primera reunión al release, y lo estoy ejecutando con agentes dentro de guardrails escritos antes de empezar.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<div class="sheet">
+  <nav class="site-nav"><a class="brand" href="../../">Juan Cuartas</a><a href="../../">Todos los posts</a></nav>
+  <article class="card">
+    <div class="byline"><div class="avatar">JC</div><div><div class="byline-name">Juan Cuartas</div><div class="byline-role">28 de septiembre de 2026 · Ingeniería</div></div></div>
+
+    <h1>El equipo estimó 160 horas. Yo aposté 40. Así estoy ejecutando esa apuesta, tarea por tarea.</h1>
+
+    <p class="lede">Un requerimiento complejo del cliente, del tipo que en otro momento habría sido un proyecto de un equipo durante varios sprints. En vez de delegarlo lo tomé yo, como director, de la primera reunión al release, con agentes de IA haciendo el trabajo dentro de reglas que escribí antes de empezar. Este post es el método, paso a paso, con los números hasta hoy.</p>
+
+    <h2><span class="n">01</span>El requerimiento se construye en las actas</h2>
+    <p>Cada reunión con el cliente tiene transcript. Un agente lo lee, genera el acta y la deja en la base de conocimiento del proyecto: qué se decidió, qué quedó pendiente y quién lo dijo. Los correos del cliente entran a la misma base, y las confirmaciones quedan enlazadas al punto que confirman. Cuando cerramos la definición eran 17 puntos acordados, cada uno con la reunión o el correo de donde salió. El requerimiento no se redactó en una sentada: se acumuló, reunión a reunión, y llegó con trazabilidad.</p>
+
+    <h2><span class="n">02</span>Prototipo antes de una línea de código</h2>
+    <p>La pantalla nueva se le mostró al cliente como prototipo, en un deck de siete capturas, antes de estimar. Lo que aprobó quedó en la base; lo que no, quedó marcado como descartado, con la fecha. Estimar sobre algo que el cliente ya vio es otra cosa que estimar sobre un texto.</p>
+
+    <h2><span class="n">03</span>Dos estimaciones, y las dos quedan escritas</h2>
+    <p>La estimación oficial salió de la mediana histórica del equipo para trabajo de ese tipo: 160 horas. Mi apuesta fue 40, porque el trabajo lo iban a ejecutar agentes con guardrails y no una persona sola. Las dos están en el ticket, una al lado de la otra. Si me equivoco, va a quedar registrado por cuánto.</p>
+
+    <h2><span class="n">04</span>36 tareas, en orden, cada una cerrable en una sesión</h2>
+    <p>El desglose son 36 tareas ordenadas, 166 horas planeadas. Cada tarea dice de qué tareas depende y qué requisitos construye. Una matriz de cobertura cruza cada requisito del cliente y del diseño con las tareas que lo construyen: cuando cierre la última, todo tiene que estar construido y probado, o la matriz lo delata. El orden va en el título de la tarea, para que un agente tome «la siguiente» sin preguntar.</p>
+    <p>Las 36 las creó un agente en Azure DevOps, con su descripción, sus horas, sus dependencias y sus etiquetas, validando cada una contra las convenciones del tablero. Cargar ese desglose a mano habría sido una tarde de copiar y pegar, y el primer sitio donde el plan se desvía de lo que se escribió.</p>
+
+    <h2><span class="n">05</span>Un skill para una sola historia</h2>
+    <p>Escribí un skill (las instrucciones que un agente carga al invocarlo) exclusivo para este requerimiento. Fuerza tres cosas que un agente solo hace cuando se acuerda: leer el todo antes de tocar código (la historia completa, el diseño, la bitácora de lo ya construido y el alcance de las tres tareas siguientes), probar hacia atrás al terminar, y dejar escrito qué hizo y qué quedó sin resolver. Una tarea por invocación. Encadenarlas es justo cómo se pierde el hilo.</p>
+
+    <h2><span class="n">06</span>Modelo y esfuerzo decididos antes, verificados en cada tarea</h2>
+    <p>No todas las tareas piden el mismo modelo. Las que definen un patrón, o tienen semántica de estado que se rompe en silencio, van al modelo más capaz; el resto, a uno más rápido, con el nivel de esfuerzo según el tamaño. Esa tabla se armó una sola vez, sobre las 36 descripciones. El skill la consulta antes de arrancar, dice en qué modelo está corriendo y frena si no coincide: el cambio lo hago yo, con una alerta previa, no el agente.</p>
+
+    <h2><span class="n">07</span>Autonomía con permisos, no con confianza</h2>
+    <p>Los agentes corren en modo automático, con una lista de permisos acotada a este requerimiento: la base de datos de pruebas, los objetos nuevos, la rama de integración. Lo que no está en la lista pide autorización. Cuando el requerimiento cierre, el permiso se retira. La autonomía es un archivo de configuración con fecha de vencimiento.</p>
+
+    <h2><span class="n">08</span>Las pruebas cierran los gaps de los criterios de aceptación</h2>
+    <p>Aquí está la seguridad. La suite de pruebas vive en la propia base de datos, en T-SQL, y cada tarea la deja completa en verde antes de abrir su PR, no solo la parte que tocó. Antes de probar, el agente restaura la base desde un backup de partida y despliega la rama encima, así cada corrida arranca del mismo estado conocido. Corre además la regresión de la funcionalidad actual, la que el cliente usa a diario, y verifica que todo objeto SQL nuevo quedó en el proyecto de base de datos, porque ese es el error que no avisa. Y cuando la tarea toca la pantalla, el agente levanta la aplicación en Chrome y la prueba él mismo, con capturas como evidencia.</p>
+    <p>Cada requisito de la matriz tiene una prueba que alguna tarea declara. Los criterios de aceptación dejan de ser un texto que alguien revisa al final y pasan a ser algo que se ejecuta en cada tarea.</p>
+
+    <h2><span class="n">09</span>La bitácora es parte del código</h2>
+    <p>Cada tarea deja una entrada en una bitácora dentro del repositorio: qué construyó, los contratos que dejó, lo que decidió por fuera del diseño y los gaps que le deja a las siguientes. Un gap abierto que apunta a tu tarea es parte de tu alcance aunque la descripción no lo nombre. Y las sesiones de los agentes siguen el esquema <a href="https://equisoide.github.io/posts/running-pending-done/">Running, Pending, Done</a> del post anterior.</p>
+
+    <h2><span class="n">10</span>Los números hasta hoy</h2>
+    <div class="nums">
+      <div class="num-row"><span class="num-label">Estimación del equipo (mediana)</span><span class="num-value">160 h</span></div>
+      <div class="num-row"><span class="num-label">Mi apuesta</span><span class="num-value">40 h</span></div>
+      <div class="num-row"><span class="num-label">Tareas del plan</span><span class="num-value">36 · 166 h</span></div>
+      <div class="num-row"><span class="num-label">Tareas cerradas al 28 de septiembre</span><span class="num-value">4 de 36</span></div>
+      <div class="num-row"><span class="num-label">Horas planeadas en esas cuatro</span><span class="num-value">14 h</span></div>
+      <div class="num-row hi"><span class="num-label">Horas reales reportadas</span><span class="num-value">1,6 h</span></div>
+    </div>
+    <p>Es una muestra chica, y las primeras tareas son las de base. Voy a actualizar este post a medida que cierren tareas. La última tarea del plan arma la comparación final: estimado contra real, tarea por tarea, con un veredicto en una línea, me dé la razón o me la quite.</p>
+
+    <hr class="divider">
+
+    <p>¿Es novedoso? Cada pieza existe por separado: spec-driven development, agentes con skills, permisos por modo, pruebas automatizadas. Lo que no veo tan seguido es la combinación: el director toma el requerimiento entero, del acta al release, y los agentes ejecutan dentro de guardrails que él mismo escribió. El método no es la herramienta. Son los guardrails, y que alguien con contexto de todo el proyecto los escriba antes de soltar el trabajo.</p>
+
+    <p class="signoff">Si dirigen un equipo y todavía delegan los requerimientos complejos porque no hay tiempo para hacerlos, prueben tomar uno entero con este esquema. Es más tiempo del que tienen, y menos del que creen.</p>
+
+    <div class="tags"><a class="tag" href="../../">← Todos los posts</a></div>
+    <div class="meta"><span class="meta-text">Juan Cuartas</span><span class="meta-text">Septiembre 2026</span></div>
+  </article>
+</div>
+</body>
+</html>

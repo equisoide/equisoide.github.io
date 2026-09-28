@@ -5,5 +5,12 @@
     "date": "2026-09-15",
     "tag": "Ingeniería",
     "lede": "Tres carpetas y dos reglas para que el contexto no se caiga entre una sesión de un agente y la siguiente."
+  },
+  {
+    "slug": "la-apuesta-de-las-40-horas",
+    "title": "El equipo estimó 160 horas. Yo aposté 40. Así estoy ejecutando esa apuesta, tarea por tarea.",
+    "date": "2026-09-28",
+    "tag": "Ingeniería",
+    "lede": "Cómo tomé un requerimiento complejo del cliente completo, de la primera reunión al release, y lo estoy ejecutando con agentes dentro de guardrails escritos antes de empezar."
   }
 ]
