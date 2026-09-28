@@ -4,20 +4,31 @@
     "title": "El problema más caro de trabajar con varios agentes no es que se equivoquen. Es que pierdan el hilo entre ellos.",
     "date": "2026-09-15",
     "tag": "Ingeniería",
-    "lede": "Tres carpetas y dos reglas para que el contexto no se caiga entre una sesión de un agente y la siguiente."
+    "lede": "Tres carpetas y dos reglas para que el contexto no se caiga entre una sesión de un agente y la siguiente.",
+    "lang": "es"
   },
   {
     "slug": "la-apuesta-de-las-40-horas",
     "title": "El equipo estimó 160 horas. Yo aposté 40. Así estoy ejecutando esa apuesta, tarea por tarea.",
     "date": "2026-09-28",
     "tag": "Ingeniería",
-    "lede": "Cómo tomé un requerimiento complejo del cliente completo, de la primera reunión al release, y lo estoy ejecutando con agentes dentro de guardrails escritos antes de empezar."
+    "lede": "Cómo tomé un requerimiento complejo del cliente completo, de la primera reunión al release, y lo estoy ejecutando con agentes dentro de guardrails escritos antes de empezar.",
+    "lang": "es"
   },
   {
     "slug": "the-40-hour-bet",
     "title": "The team estimated 160 hours. I bet 40. This is how I am executing that bet, one task at a time.",
     "date": "2026-09-28",
     "tag": "Engineering",
-    "lede": "How I took a complex client requirement end to end, from the first meeting to the release, and am executing it with agents inside guardrails written before starting."
+    "lede": "How I took a complex client requirement end to end, from the first meeting to the release, and am executing it with agents inside guardrails written before starting.",
+    "lang": "en"
+  },
+  {
+    "slug": "running-pending-done-en",
+    "title": "The most expensive problem of working with several agents is not that they make mistakes. It is that they lose the thread between each other.",
+    "date": "2026-09-15",
+    "tag": "Engineering",
+    "lede": "Three folders and two rules so context does not fall through the cracks between one agent session and the next.",
+    "lang": "en"
   }
 ]

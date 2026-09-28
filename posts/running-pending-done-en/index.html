@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Running, Pending, Done · Juan Cuartas</title>
+<meta name="description" content="Three folders and two rules so context does not fall through the cracks between one agent session and the next.">
+<meta property="og:title" content="The most expensive problem of working with several agents is not that they make mistakes. It is that they lose the thread between each other.">
+<meta property="og:description" content="Three folders and two rules so context does not fall through the cracks between one agent session and the next.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<div class="sheet">
+  <nav class="site-nav"><a class="brand" href="../../en/">Juan Cuartas</a><a href="../../en/">All posts</a></nav>
+  <article class="card">
+    <div class="byline"><div class="avatar">JC</div><div><div class="byline-name">Juan Cuartas</div><div class="byline-role">September 15, 2026 · Engineering</div></div><a class="lang-switch" href="../running-pending-done/">Versión en español</a></div>
+
+    <h1>The most expensive problem of working with several agents is not that they make mistakes. It is that they lose the thread between each other.</h1>
+
+    <p class="lede">I have spent months running AI agents in parallel on the same project: one session opens work, another picks it up hours or days later. The real cost was never bad reasoning. It was the context that falls through the cracks between one session and the next.</p>
+
+    <p>The solution ended up being boring on purpose: three folders.</p>
+
+    <div class="folders">
+      <div class="folder-row"><span class="folder-name">Running/</span><span class="folder-desc">today's session, in progress.</span></div>
+      <div class="folder-row"><span class="folder-name">Pending/</span><span class="folder-desc">it ended leaving work half done: someone else picks it up.</span></div>
+      <div class="folder-row"><span class="folder-name">Done/</span><span class="folder-desc">it ended with nothing pending.</span></div>
+    </div>
+
+    <p>Two rules make this actually work:</p>
+
+    <ol class="rules">
+      <li><span>On closing, the agent itself decides the folder, without waiting to be asked. If something is left half done, it goes to <em>Pending/</em> with what is missing written at the top, in first position.</span></li>
+      <li><span>Inside, nothing is summarized: everything is written. What was measured, what was discarded and why, what went wrong. The session is not opened by the one who lived it.</span></li>
+    </ol>
+
+    <p>The effect I did not expect: this made the handoff between agents trivial. Passing work from one to another stopped being copying context by hand or re-explaining from scratch. Now it is pointing at the file in <em>Pending/</em> and continuing exactly where it left off.</p>
+
+    <p>Is it a new idea? Honestly, not entirely: memory banks, checkpointing, handoff notes, the concept is already out there. What I do think is worth sharing is the execution: forcing the closing decision instead of leaving it floating, and forcing everything to be written down instead of a tidy summary. That is exactly where most handoff patterns fall short: the elegant summary is the first thing to lose the detail the next agent needs.</p>
+
+    <p>And it does not compete with <em>spec-driven development</em>: they complement each other. The spec says what has to be built; the log says where the one building it left off, what it measured and what it discarded. One prevents drift; the other prevents starting from zero.</p>
+
+    <hr class="divider">
+
+    <p class="signoff">If you are building with several agents and feel the context slipping away between sessions, try this before anything more sophisticated.</p>
+
+    <div class="howto">
+      <div class="howto-label">Want to try it in your own workspace? Paste this to your agent:</div>
+      <div class="prompt-block">
+        <div class="prompt-block-head"><span class="prompt-tag">Prompt for your agent</span><button class="copy-btn" id="copy" type="button">Copy</button></div>
+        <pre>Create a Sessions/ folder with three subfolders: Running/, Pending/ and Done/.
+
+Running/ holds today's session, in progress.
+Pending/ holds sessions that ended with work half done, so another session can pick them up.
+Done/ holds sessions that ended with nothing pending.
+
+Rules I want you to follow:
+
+1. At the start of any session, create a new file in Running/ named YYYY-MM-DD-topic-in-kebab-case.md.
+
+2. Write everything in that file as you work: details, notes, measured numbers, what you discarded and why, what went wrong. Do not summarize: whoever opens it later did not live the session.
+
+3. On closing, decide the destination folder yourself, do not wait for me to ask. If something is left half done, move the file to Pending/ with what is missing written at the top, in first position. If nothing is pending, move it to Done/. Tell me in one line which folder it went to and why.
+
+4. When opening a new session, check whether there is a file in Running/ with a date other than today. If there is, it is a session that ended without closing: ask me whether it goes to Pending/ or Done/ before starting yours.</pre>
+      </div>
+    </div>
+
+    <div class="tags"><a class="tag" href="../../en/">← All posts</a></div>
+    <div class="meta"><span class="meta-text">Juan Cuartas</span><span class="meta-text">September 2026</span></div>
+  </article>
+</div>
+<script>
+document.getElementById('copy').addEventListener('click', async e => {
+  const text = document.querySelector('.prompt-block pre').innerText;
+  try { await navigator.clipboard.writeText(text); } catch (err) {
+    const r = document.createRange(); r.selectNodeContents(document.querySelector('.prompt-block pre'));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+  }
+  e.target.textContent = 'Copied'; setTimeout(() => e.target.textContent = 'Copy', 1500);
+});
+</script>
+</body>
+</html>
